@@ -1,0 +1,79 @@
+package dev.procheck.offshore.stock.controllers;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.sanselan.formats.tiff.TiffElement.Stub;
+import org.json.simple.JSONObject;
+
+import dev.procheck.offshore.stock.dao.impl.CartonDaoImpl;
+
+/**
+ * Servlet implementation class ChangePositionCartonController
+ */
+@WebServlet("/ChangePositionCarton")
+public class ChangePositionCartonController extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public ChangePositionCartonController() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	@SuppressWarnings("unchecked")
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		JSONObject jo = new JSONObject();	
+		String code = request.getParameter("code");
+		String position =request.getParameter("action");
+		boolean status;
+        if(code!=null)
+        {
+        	try {
+        		if(position.equals("carton vers le depot"))
+        		{
+        			status = CartonDaoImpl.updateStatusCarton(code, position);
+        		}
+        		status = CartonDaoImpl.updatePosition(code, position);
+        		if(status==true) {
+        			jo.put("msg", "Position de carton("+code+") modifier");
+        			jo.put("status", true);
+        		}
+        		else
+        		{
+        			jo.put("msg", "Carton ("+code+") Non trouver !!!");
+        			jo.put("status", false);
+        		}
+            	
+        	}
+        	catch(Exception ex){
+        		jo.put("msg", ex.getMessage());
+        		jo.put("status", false);
+        	}
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write(jo.toString());
+        }
+
+
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doGet(request, response);
+	}
+
+}

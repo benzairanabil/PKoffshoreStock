@@ -1,0 +1,50 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+<style type="text/css">
+.navbar-dark .navbar-nav .nav-link{
+color:#d78817 !important;
+
+}
+.navbar-dark .navbar-nav .nav-link:hover{
+text-decoration: underline;
+
+}
+.navbar-dark .navbar-nav .nav-link:active{
+text-decoration: underline;
+}
+</style>
+</head>
+<body>
+<nav class="navbar navbar-expand-sm bg-light navbar-dark">
+
+  <ul class="navbar-nav navbar-right mr-auto">
+  <li class="nav-item disabled" >
+      <img style="   height: 100%;   width: 100%;" src="./assets/images/logo.svg" alt="logo">
+    </li>
+    <li class="nav-item active" style="margin-left:500px;">
+      <a class="nav-link" href="scandepot">Scan Depot</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="scanproduction">Scan Production</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link " href="ControleProduction">Controle Production</a>
+    </li>
+      <li class="nav-item">
+      <a class="nav-link" href="ConsultationCarton">Consultation</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link " href="integration">Integration</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link " href="authentification">Logout</a>
+    </li>
+  </ul>
+</nav>
+</body>
+</html>

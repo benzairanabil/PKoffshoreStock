@@ -1,0 +1,93 @@
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Consultation Carton</title>
+<link rel="stylesheet" href="./assets/style/bootstrap.min.css">
+<link rel="stylesheet" href="./assets/style/style_consult.css">
+<link rel="stylesheet" type="text/css"
+	href="./assets/style/jquery.dataTables.css">
+
+</head>
+<body>
+	<jsp:include page="header.jsp" />
+	<div class="card border-secondary mt-5 mb-5"
+		style="margin-left: 30px; margin-right: 30px;">
+		<div class="card-header text-center">
+			<strong> Consultation Des Cartons</strong>
+		</div>
+		<div class="card-body text-secondary">
+
+			<div class="container">
+
+				<table class="table table-bordered table-striped text-center"
+					id="search_table">
+					<thead>
+						<tr>
+							<th>Numero</th>
+							<th>Type Carton</th>
+							<th>Date Caractirisation</th>
+							<th>Code Archivage</th>
+							<th>Tracker</th>
+						</tr>
+					</thead>
+					<tbody id="myTable">
+						<c:forEach items="${cartons}" var="carton">
+							<tr class="tr">
+								<td><c:out value="${carton.numero}" /></td>
+								<td><c:out value="${carton.typeCarton}" /></td>
+								<td><c:out value="${carton.dateCaractirisation}" /></td>
+								<td><c:out value="${carton.cb_archivage}" /></td>								
+								<td><a href="#" style="cursur: pointer;"
+									onclick="show_modal_steps('${carton.numero}');"> <img
+										alt="" src="assets/images/geo-alt.svg"></a></td>
+							</tr>
+						</c:forEach>
+					</tbody>
+				</table>
+
+			</div>
+
+		</div>
+	</div>
+
+	<!-- debut modal steps -->
+	<div class="modal fade" id="confirmation_reception" tabindex="-1" 
+		role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content " style=" width: 700px !important;">
+				<div class="modal-header alert alert-success text-center"     style="padding-top: 1px; padding-bottom: 0px;">
+					<h4 class="modal-title text-center" id="exampleModalLabel" style="">	Carton Tracker</h4>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body" style="max-height:400px;overflow-y:scroll;">
+								<ol class="list-group vertical-steps" >
+																	
+								</ol>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<jsp:include page="footer.jsp" />
+	<!-- jQuery library -->
+	<script type="text/javascript" src="assets/scripts/jquery.min.js"></script>
+	<!-- Popper JS -->
+	<script type="text/javascript" src="assets/scripts/popper.min.js"></script>
+	<!-- Latest compiled JavaScript -->
+	<script type="text/javascript" src="assets/scripts/bootstrap.min.js"></script>
+	<script type="text/javascript" src="assets/scripts/script_consult.js"></script>
+	<script type="text/javascript" src="assets/scripts/script.js"></script>
+	<script type="text/javascript" charset="utf8"
+		src="assets/scripts/jquery.dataTables.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,14 @@
+package dev.procheck.offshore.stock.users;
+
+public class AddUser {
+
+	String profile;
+	String service;
+	String login;
+	String password;
+	
+	
+	public void putQrcode(String fileImgPath) {
+		
+	}
+}

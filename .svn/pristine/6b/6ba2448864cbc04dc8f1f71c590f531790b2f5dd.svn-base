@@ -1,0 +1,9 @@
+package dev.procheck.offshore.stock.daoo;
+
+import java.util.List;
+
+import dev.procheck.offshore.stock.models.Carton;
+
+public abstract class CartonDao {
+	//public abstract void updateCartons(List<Carton> cartons);
+}

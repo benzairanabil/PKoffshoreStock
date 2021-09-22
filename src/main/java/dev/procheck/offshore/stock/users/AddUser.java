@@ -1,0 +1,86 @@
+package dev.procheck.offshore.stock.users;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+
+import dev.procheck.offshore.stock.utils.CommonFunc;
+import dev.procheck.offshore.stock.utils.CryptWithMD5;
+import dev.procheck.offshore.stock.utils.EncryptionPassword;
+
+public class AddUser {
+	String local; // DEPOT1 //23
+	String profile; // DEPOT + PROD-SCAN + PROD-CONTROLE + ADMIN
+	// String service; //
+	String login; // DEPOT1
+	String password; // depo@Dkilm
+
+	public static void main(String[] args) {
+		AddUser addUser = new AddUser();
+		try {
+
+			addUser.putQrcode("C:/Users/cnbe/Desktop/QR ofshore/qr_.png");
+
+			 System.out.println(CryptWithMD5.cryptWithMD5("KL09hhj8@#GHT1"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void putQrcode(String fileImgPath) throws Exception {
+
+		local = "23";
+		profile = "PRODSCAN";
+		login = "PRODSCAN1";
+		password = "Mkl9@HJ8917$";
+
+		EncryptionPassword encryptionPassword = new EncryptionPassword();
+		String dataQR = CommonFunc
+				.getBase64Encode(encryptionPassword.encrypt(local + ";" + profile + ";" + login + ";" + password));
+		System.out.println("dataQR : [" + dataQR + "]");
+
+		String charset = "UTF-8";
+
+		Map<EncodeHintType, ErrorCorrectionLevel> hashMap = new HashMap<EncodeHintType, ErrorCorrectionLevel>();
+
+		hashMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
+		//createQR(dataQR, fileImgPath.replace("qr_.png", "qr_" + login + ".png"), charset, hashMap, 350, 350);
+		generateQRCodeImage(dataQR, 350, 350, fileImgPath.replace("qr_.png", "qr_" + login + "_new.png"));
+		System.out.println("QR Code Generated!!! ");
+
+		/*
+		 * String[] dataQRDec = dataQR.split("\\|"); for (String str : dataQRDec) {
+		 * System.out.println(encryptionPassword.decrypt(CommonFunc.getBase64Decode(str)
+		 * )); }
+		 */
+	}
+
+	public static void createQR(String data, String path, String charset, Map hashMap, int height, int width)
+			throws WriterException, IOException {
+
+		BitMatrix matrix = new MultiFormatWriter().encode(new String(data.getBytes(charset), charset),
+				BarcodeFormat.QR_CODE, width, height);
+		MatrixToImageWriter.writeToPath(matrix, path.substring(path.lastIndexOf('.') + 1), (new File(path)).toPath());
+	}
+
+	private static void generateQRCodeImage(String text, int width, int height, String filePath)
+			throws WriterException, IOException {
+		QRCodeWriter qrCodeWriter = new QRCodeWriter();
+		BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
+
+		Path path = FileSystems.getDefault().getPath(filePath);
+		MatrixToImageWriter.writeToPath(bitMatrix, "PNG", path);
+	}
+}

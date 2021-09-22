@@ -1,0 +1,57 @@
+package dev.procheck.offshore.stock.utils;
+
+
+import java.sql.Connection;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
+import org.apache.log4j.Logger;
+
+
+public class PKConnect {
+	private java.sql.Connection con = null;
+	final static Logger logger = Logger.getLogger(PKConnect.class);
+	// Constructor
+	public PKConnect() {
+	}
+
+	public  Connection getCostumConnection(String url, String username, String password) {
+				
+		try {
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			con = java.sql.DriverManager.getConnection(url, username, password);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return con;
+	}
+
+	public void closeConnection() {
+		try {
+			if (con != null) {
+				con.close();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static Connection getCnxToDb() {
+		Connection cnxToDb = null;
+		Context ctx = null;
+		try {
+			ctx = new InitialContext();
+			DataSource ds = (DataSource) ctx.lookup("java:/comp/env/jdbc/ConnectDb");
+			cnxToDb = ds.getConnection();
+		} catch (Exception e) {
+			
+			logger.error("PKConnect - error",e);
+			e.printStackTrace();
+			cnxToDb = null;
+		} finally {
+
+		}
+		return cnxToDb;
+	}
+
+}

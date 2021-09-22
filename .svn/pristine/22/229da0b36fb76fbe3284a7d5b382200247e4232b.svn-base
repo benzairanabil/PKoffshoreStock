@@ -1,0 +1,49 @@
+package dev.procheck.offshore.stock.models;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
+
+public class ConnexionDB {
+	private static Connection connection;
+	//public static final Properties configProp = Methods.loadFileInit();
+	//private  static final Logger LOGGER = Logger.getLogger(ConnexionDB.class);   
+	public static Connection ConnetionDB() {
+		try {
+
+			
+			String dbDriverClass = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+			String dbConnUrl ="jdbc:sqlserver://PCP-091JQP\\SQLEXPRESS04:1433;databaseName=PK_DB_OFFSHORE_STOCK";
+			String dbUser="sa";
+			String dbPassword="Azerty01";
+			//Register jdbc driver class. 
+			Class.forName(dbDriverClass);
+			connection=DriverManager.getConnection(dbConnUrl,dbUser,dbPassword);
+
+			//connection=getCnxToDb();
+		} catch (Exception e) {
+			//LOGGER.error("",e);
+			e.printStackTrace();
+		}
+		return connection;
+		
+	}
+	
+	public static Connection getCnxToDb() {
+		Connection cnxToDb = null;
+		Context ctx = null;
+		try {
+			ctx = new InitialContext();
+			DataSource ds = (DataSource) ctx.lookup("java:/comp/env/jdbc/ConnectDb");
+			cnxToDb = ds.getConnection();
+		} catch (Exception e) {
+			//LOGGER.error("",e);
+			cnxToDb = null;
+		} finally {
+
+		}
+		return cnxToDb;
+	}
+}

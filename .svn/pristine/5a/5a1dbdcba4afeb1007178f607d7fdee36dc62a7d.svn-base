@@ -1,0 +1,228 @@
+package dev.procheck.offshore.stock.dao.impl;
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.simple.JSONObject;
+
+import dev.procheck.offshore.stock.daoo.CartonDao;
+import dev.procheck.offshore.stock.models.Carton;
+import dev.procheck.offshore.stock.models.ConnexionDB;
+
+public  class CartonDaoImpl extends CartonDao {
+	
+	public static String importCartons(List<Carton> cartons) throws SQLException
+	{
+		String message="";
+		if(cartons==null)
+		{
+			message="cartons null";
+		}
+		 Connection  connection=null;
+		try {
+			PreparedStatement ps = null;
+			connection=ConnexionDB.ConnetionDB();
+			for(Carton carton:cartons)
+			{
+					if(!checkCarton(carton.getNumero()))
+					{
+						String req ="insert into T_DATA_CARTON (s_numero,d_date_caractrisation,s_type,s_barre_code) values (?,?,?,?)";
+						ps =connection.prepareStatement(req);
+						ps.setString(1,carton.getNumero());
+						ps.setDate(2, carton.getDateCaractirisation()==null?null:new Date(carton.getDateCaractirisation().getTime()));
+						ps.setString(3,carton.getTypeCarton());
+						ps.setString(4,carton.getNumero());
+						ps.executeUpdate();
+					}
+					
+								
+			}
+			connection.close();	
+			message="Les donnes bien importé";
+		}
+		catch(Exception ex)
+		{
+			ex.printStackTrace();
+			message=ex.getMessage();
+		}
+		finally {
+			connection.close();	
+		}
+		return message;
+	}
+	
+	
+	
+	public static void updateStatus(String code,int status,String cbArchivage) throws SQLException
+	{
+		
+		Connection  connection=null;
+		try {
+				PreparedStatement ps = null;
+				connection=ConnexionDB.ConnetionDB();
+				String req ="update T_DATA_CARTON SET " + "n_status=? , s_cb_archivage=? " + "where s_barre_code=?";
+				ps =connection.prepareStatement(req);
+				ps.setInt(1,status);
+				ps.setString(2, cbArchivage);
+				ps.setString(3, code);
+				ps.executeUpdate();
+				connection.close();			
+		}
+		catch(Exception ex)
+		{
+			ex.printStackTrace();
+		}
+		finally
+		{
+			connection.close();
+		}
+		
+		
+	}
+	public static int getStatusCarton(String code) throws SQLException
+	{
+		int statu=-1;
+		Connection  connection=null;
+		try {
+			PreparedStatement ps = null;
+			connection=ConnexionDB.ConnetionDB();
+			ResultSet result=null;
+			String reqCheck="select n_status from T_DATA_CARTON where s_barre_code=?";
+			ps =connection.prepareStatement(reqCheck);
+			ps.setString(1,code);
+			result=ps.executeQuery();
+			if(result.next())
+			{
+				statu = result.getInt(1);
+				connection.close();	
+				
+			}
+				
+		}
+		catch(Exception ex)
+		{
+			ex.printStackTrace();
+		}
+		finally
+		{
+			connection.close();
+		}
+		
+		
+		return statu;
+	}
+	
+	public static boolean checkCarton(String code) throws SQLException
+	{
+		boolean status=false;
+		Connection  connection=null;
+		try {
+			PreparedStatement ps = null;
+			connection=ConnexionDB.ConnetionDB();
+			ResultSet result=null;
+			String reqCheck="select * from T_DATA_CARTON where s_barre_code=?";
+			ps =connection.prepareStatement(reqCheck);
+			ps.setString(1,code);
+			result=ps.executeQuery();
+			if(result.next())
+			{
+				connection.close();
+				return true;	
+			}
+			
+			
+		}
+		catch(Exception ex)
+		{
+			ex.printStackTrace();
+		}
+		finally
+		{
+			connection.close();
+		}
+		return status;
+	}
+	public static List<Carton> allCarton() throws SQLException{
+		List<Carton> cartons = new ArrayList<Carton>();
+		Connection  connection=null;
+		try {
+			PreparedStatement ps = null;
+			connection=ConnexionDB.ConnetionDB();
+			ResultSet rs=null;
+			String reqCheck="select s_numero,s_type,d_date_caractrisation,s_cb_archivage from T_DATA_CARTON ";
+			ps =connection.prepareStatement(reqCheck);
+			rs=ps.executeQuery();
+			while(rs.next()) {
+				Carton carton = new Carton();
+				carton.setNumero(rs.getString(1));
+				carton.setTypeCarton(rs.getString(2));
+				carton.setDateCaractirisation(rs.getDate(3));
+				carton.setCb_archivage(rs.getString(4));
+				cartons.add(carton);				
+			}
+			connection.close();
+		}catch(Exception ex)
+		{
+			System.out.println(ex.getMessage());
+			connection.close();
+		}
+
+		
+	return cartons;	
+	}
+	
+	
+	@SuppressWarnings("null")
+	public static int getStatus(String numero) throws SQLException{
+		int status = -1;
+		Connection  connection=null;
+		try {
+			PreparedStatement ps = null;
+			connection=ConnexionDB.ConnetionDB();
+			ResultSet rs=null;
+			String reqCheck="select n_status from T_DATA_CARTON where s_numero=?";
+			ps =connection.prepareStatement(reqCheck);
+			ps.setString(1, numero);
+			rs=ps.executeQuery();
+			if(rs.next())
+			{
+				status = rs.getInt(1);
+			}
+
+			connection.close();
+		}catch(Exception ex)
+		{
+			System.out.println(ex.getMessage());
+			connection.close();
+		}
+
+		
+	return status;	
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static String countCartons(){
+		String query="select count(*) from T_DATA_CARTON ";
+		int count=0;
+		JSONObject obj=new JSONObject();
+		try{
+		Connection con=ConnexionDB.ConnetionDB();
+		PreparedStatement ps=con.prepareStatement(query);
+		ResultSet rs=ps.executeQuery();
+		if(rs.next()){
+		count=rs.getInt(1);
+		obj.put("count",count);
+		}
+		}catch(Exception e){
+		e.printStackTrace();
+		}
+		return obj.toString();
+		}
+	
+
+}
